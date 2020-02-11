@@ -1,6 +1,7 @@
 # Check commit action
 
 This action checks content of git commits
+teeee
 
 ## Inputs
 N/A
