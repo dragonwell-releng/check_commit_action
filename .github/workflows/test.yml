@@ -1,0 +1,11 @@
+on: [push]
+
+jobs:
+  check_commit_job:
+    runs-on: ubuntu-latest
+    name: check commit test 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: local test
+      uses: ./
