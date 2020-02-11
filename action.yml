@@ -1,0 +1,5 @@
+name: 'Check commit'
+description: 'check commit from file'
+runs:
+  using: 'node12'
+  main: 'index.js'
