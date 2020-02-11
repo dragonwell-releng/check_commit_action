@@ -7,5 +7,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: local test
+    - name: verbose
+      run: |
+        export
+        git remote -v
+        git branch -a
+    - name: local check
       uses: ./
