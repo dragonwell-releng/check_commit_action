@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 
 // we will use 'git log --pretty=%B######' to show logs,
 // and using special string '########' to seperate revisions.
-const rev_separator = "########";
+const rev_separator = "#".repeat(27);
 
 // check comment of single revision, git metadata lines are not included
 function check_rev_comment(lines) {
@@ -62,7 +62,7 @@ function check_last_n_revisions(ref_name, nof_revs) {
     console.log("checking last " + nof_revs + " revisions on " + ref_name);
 
     // retrieve top N revisions, using ######## (8 * #) as separator
-    var out_str = verbose_run("git log --pretty=%B" + rev_separator + " -n" + nof_revs + " " + ref_name);
+    var out_str = verbose_run("git log --pretty=%B%n" + rev_separator + " -n" + nof_revs + " " + ref_name);
 
     // parsed comments, each element is from one revision
     var comments = parse_raw_git_log(out_str);
@@ -93,6 +93,7 @@ function show_envs() {
 
 // entry of checker action
 function main() {
+    show_envs();
     try {
         // only trigger for pull_requests
         if (github.context.eventName === 'pull_request') {
