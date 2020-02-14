@@ -1,15 +1,10 @@
 # Check commit action
-
 This action checks content of git commits
 
 ## Inputs
-N/A
+The action will read from github contexts and environment variables
 ## Outputs
-N/A
-### `is_valid`
-
-If it passed this check
+pass or not
 
 ## Example usage
-
 uses: actions/check_commit_action@v1
