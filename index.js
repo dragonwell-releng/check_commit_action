@@ -24,6 +24,7 @@ function check_rev_comment(lines) {
     console.log(">> checking title line:" + title);
     if (check_rev_titile(title) != 0) {
         console.log(">> Title check failed");
+        core.setFailed("Title check failed:" + title);
         return 1;
     } else {
         console.log(">> Title is OK!");
@@ -35,6 +36,7 @@ function check_rev_comment(lines) {
     mand_fields.forEach(mf => {
         if (lines.find(l => l.startsWith(mf)) == undefined) {
             console.log("Missing mandatory field:" + mf);
+            core.setFailed("Missing mandatory field '" + mf + "' in git log");
             return 1;
         }
     });
