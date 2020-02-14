@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const { execSync } = require('child_process');
+const child_process = require('child_process');
+const process = require('process');
 
 // we will use 'git log --pretty=%B######' to show logs,
 // and using special string '########' to seperate revisions.
@@ -35,7 +36,7 @@ function check_rev_comment(lines) {
 // Run git command in sub-process, show the command string and output string;
 function verbose_run(cmd_string) {
     console.log("Executing command: " + cmd_string);
-    var out_buf = execSync(cmd_string);
+    var out_buf = child_process.execSync(cmd_string);
     var out_str = out_buf.toString();
     console.log("Output:\n\"\"\"\n" + out_str + "\"\"\"");
     return out_str;
@@ -88,11 +89,12 @@ function check_last_n_revisions(ref_name, nof_revs) {
 
 // help debugging
 function show_envs() {
-    console.log(github.context);
+    console.log("Environment variables:\n", process.env);
+    console.log("github.context:\n", github.context);
 }
 
 // entry of checker action
-function main() {
+function do_check() {
     show_envs();
     try {
         // only trigger for pull_requests
@@ -117,8 +119,9 @@ function main() {
 
 // for local testing purpose
 function local_testing() {
+    show_envs();
     check_last_n_revisions('local_ref_branch1581603361965', 1);
 }
 
 // local_testing();
-main();
+do_check();
