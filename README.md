@@ -7,4 +7,4 @@ The action will read from github contexts and environment variables
 pass or not
 
 ## Example usage
-uses: actions/check_commit_action@v1
+uses: dragonwell-releng/check_commit_action@master
