@@ -7,18 +7,27 @@ const process = require('process');
 // and using special string '########' to seperate revisions.
 const rev_separator = "#".repeat(27);
 
+function check_rev_titile(title) {
+    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR'];
+    if (known_tags.find(tag => title.startsWith("[" + tag + "]")) == undefined) {
+        console.log("Unkown tag:" + title);
+        return 1;
+    }
+    return 0;
+}
+
 // check comment of single revision, git metadata lines are not included
 function check_rev_comment(lines) {
     console.log(lines);
     var title = lines[0];
     // check title
     console.log(">> checking title line:" + title);
-    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS'];
-    if (known_tags.find(tag => title.startsWith("[" + tag + "]")) == undefined) {
-        console.log("Unkown tag:" + title);
+    if (check_rev_titile(title) != 0) {
+        console.log(">> Title check failed");
         return 1;
+    } else {
+        console.log(">> Title is OK!");
     }
-    console.log(">> Title is OK!");
 
     // check for mandatory fields
     console.log(">> checking mandatory fields!");
@@ -87,6 +96,16 @@ function check_last_n_revisions(ref_name, nof_revs) {
     });
 }
 
+// check pull requests
+function check_pull_requests() {
+    if (github.context.payload.pull_request.commits != 1) {
+        core.setFailed("Each pull request should contain only ONE commit!");
+    }
+    if (check_rev_titile(github.context.payload.pull_request.title) != 0) {
+        core.setFailed("Pull request title check failed!");
+    }
+}
+
 // help debugging
 function show_envs() {
     console.log("Environment variables:\n", process.env);
@@ -107,6 +126,7 @@ function do_check() {
             verbose_run("git fetch origin " + remote_ref + ":" + local_branch);
 
             // run checking
+            check_pull_requests();
             check_last_n_revisions(local_branch, 1);
         } else {
             core.setFailed("Can only be triggered on pull_request, current event=" +
