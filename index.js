@@ -127,6 +127,7 @@ function fetch_pull_request_to_local_branch(local_branch) {
     } else {
         core.setFailed("Unsupported github action:" + github.context.payload.action);
     }
+    verbose_run("git checkout -f " + local_branch);
 }
 
 // check pull requests
@@ -137,6 +138,22 @@ function check_pull_requests() {
     if (check_rev_titile(github.context.payload.pull_request.title) != 0) {
         core.setFailed("Pull request title check failed!");
     }
+}
+
+// check the format of specific rev
+function check_patch(rev) {
+    var out = verbose_run("git show " + rev);
+    var ln = 0;
+    console.log("Checking patch format:\n");
+    out.split("\n").forEach(line => {
+        ln = ln + 1;
+        console.log(ln + ": " + line);
+        // only check for newly added lines
+        if (line.startsWith('+') && line.endsWith(" ")) {
+            console.log("\ntrailing spaces found!\n");
+            core.setFailed("Trailing spaces in line-" + ln + "\n" + line);
+        }
+    });
 }
 
 // help debugging
@@ -158,6 +175,7 @@ function do_check() {
             check_pull_requests();
             fetch_pull_request_to_local_branch(local_branch);
             check_last_n_revisions(local_branch, 1);
+            check_patch(local_branch);
         } else {
             core.setFailed("Can only be triggered on pull_request, current event=" +
                 github.context.eventName)
