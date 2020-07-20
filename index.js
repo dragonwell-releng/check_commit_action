@@ -8,7 +8,7 @@ const process = require('process');
 const rev_separator = "#".repeat(27);
 
 function check_rev_titile(title) {
-    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR'];
+    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge'];
     if (known_tags.find(tag => title.startsWith("[" + tag + "]")) == undefined) {
         console.log("Unkown tag:" + title);
         return 1;
