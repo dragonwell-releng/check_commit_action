@@ -7,9 +7,13 @@ const process = require('process');
 // and using special string '########' to seperate revisions.
 const rev_separator = "#".repeat(27);
 
+function tag_of(title) {
+    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport'];
+    return known_tags.find(tag => title.startsWith("[" + tag + "]"));
+}
+
 function check_rev_titile(title) {
-    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge'];
-    if (known_tags.find(tag => title.startsWith("[" + tag + "]")) == undefined) {
+    if (tag_of(title) == undefined) {
         console.log("Unkown tag:" + title);
         return 1;
     }
@@ -130,13 +134,18 @@ function fetch_pull_request_to_local_branch(local_branch) {
     verbose_run("git checkout -f " + local_branch);
 }
 
+function could_contain_multiple_commits(tag) {
+    return 'Merge' === tag || 'Backport' === tag;
+}
+
 // check pull requests
 function check_pull_requests() {
-    if (github.context.payload.pull_request.commits != 1) {
-        core.setFailed("Each pull request should contain only ONE commit!");
-    }
     if (check_rev_titile(github.context.payload.pull_request.title) != 0) {
         core.setFailed("Pull request title check failed!");
+    }
+    var tag = tag_of(github.context.payload.pull_request.title);
+    if (!could_contain_multiple_commits(tag) && github.context.payload.pull_request.commits != 1) {
+        core.setFailed("Each pull request should contain only ONE commit!");
     }
 }
 
