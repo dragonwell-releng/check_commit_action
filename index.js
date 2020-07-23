@@ -140,10 +140,6 @@ function could_contain_multiple_commits(tag) {
 
 // check pull requests
 function check_pull_requests() {
-    if (github.context.payload.pull_request.title.startsWith("Revert ")
-        && github.context.payload.pull_request.commits == 1) {
-      return;
-    }
     if (check_rev_titile(github.context.payload.pull_request.title) != 0) {
         core.setFailed("Pull request title check failed!");
     }
@@ -181,6 +177,10 @@ function do_check() {
     try {
         // only trigger for pull_requests
         if (github.context.eventName === 'pull_request') {
+            if (github.context.payload.pull_request.title.startsWith("Revert ")
+                && github.context.payload.pull_request.commits == 1) {
+              return;
+            }
             // using a unique name for local branch
             var local_branch = "local_ref_branch_" + Date.now();
 
