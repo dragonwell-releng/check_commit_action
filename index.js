@@ -140,6 +140,10 @@ function could_contain_multiple_commits(tag) {
 
 // check pull requests
 function check_pull_requests() {
+    if (github.context.payload.pull_request.title.startsWith("Revert ")
+        && github.context.payload.pull_request.commits == 1) {
+      return;
+    }
     if (check_rev_titile(github.context.payload.pull_request.title) != 0) {
         core.setFailed("Pull request title check failed!");
     }
