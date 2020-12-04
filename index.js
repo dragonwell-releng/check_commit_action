@@ -171,6 +171,10 @@ function show_envs() {
     console.log("github.context:\n", github.context);
 }
 
+function checkCodeFormat(tag) {
+    return 'Merge' === tag || 'Backport' === tag;
+}
+
 // entry of checker action
 function do_check() {
     show_envs();
@@ -191,7 +195,10 @@ function do_check() {
             check_pull_requests();
             fetch_pull_request_to_local_branch(local_branch);
             check_last_n_revisions(local_branch, 1);
-            check_patch(local_branch);
+            var tag = tag_of(github.context.payload.pull_request.title);
+            if (checkCodeFormat(tag)) {
+                check_patch(local_branch);
+            }
         } else {
             core.setFailed("Can only be triggered on pull_request, current event=" +
                 github.context.eventName)
