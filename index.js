@@ -171,7 +171,7 @@ function show_envs() {
     console.log("github.context:\n", github.context);
 }
 
-function checkCodeFormat(tag) {
+function skipCodeFormat(tag) {
     return 'Merge' === tag || 'Backport' === tag;
 }
 
@@ -196,7 +196,7 @@ function do_check() {
             fetch_pull_request_to_local_branch(local_branch);
             check_last_n_revisions(local_branch, 1);
             var tag = tag_of(github.context.payload.pull_request.title);
-            if (checkCodeFormat(tag)) {
+            if (!skipCodeFormat(tag)) {
                 check_patch(local_branch);
             }
         } else {
