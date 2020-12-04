@@ -51,7 +51,7 @@ function check_rev_comment(lines) {
 // Run git command in sub-process, show the command string and output string;
 function verbose_run(cmd_string) {
     console.log("Executing command: " + cmd_string);
-    var out_buf = child_process.execSync(cmd_string);
+    var out_buf = child_process.execSync(cmd_string, {maxBuffer: Infinity});
     var out_str = out_buf.toString();
     console.log("Output:\n\"\"\"\n" + out_str + "\"\"\"");
     return out_str;
