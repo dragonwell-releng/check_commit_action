@@ -103,7 +103,7 @@ function check_last_n_revisions(ref_name, nof_revs) {
 }
 
 function fetch_pull_request_to_local_branch(local_branch) {
-    if (github.context.payload.action === "opened") {
+    if (github.context.payload.action.endsWith("opened")) {
         // at creation of pull request
         // extract source SHA from the first merge commit
         var out = verbose_run("git log -1 --pretty=%B " + github.context.sha);
