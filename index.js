@@ -188,6 +188,11 @@ function do_check() {
                 && github.context.payload.pull_request.commits == 1) {
               return;
             }
+            if ('Backport' === tag_of(github.context.payload.pull_request.title)
+                && github.context.payload.pull_request.commits !== 1) {
+              // Skip backporting multiple commits (for Wisp)
+              return;
+            }
             // using a unique name for local branch
             var local_branch = "local_ref_branch_" + Date.now();
 
