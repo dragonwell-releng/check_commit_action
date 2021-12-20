@@ -44,6 +44,10 @@ function check_rev_comment(lines) {
             return 1;
         }
     });
+    if (lines.find(l => l.includes("alibaba-inc.com")) == undefined) {
+        console.log("No alibaba-inc string in commit message");
+        return 1;
+    }
     console.log(">> All mandatory fields are present");
     return 0;
 }
