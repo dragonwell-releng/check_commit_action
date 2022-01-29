@@ -148,9 +148,9 @@ function check_pull_requests() {
         core.setFailed("Pull request title check failed!");
     }
     var tag = tag_of(github.context.payload.pull_request.title);
-    if (!could_contain_multiple_commits(tag) && github.context.payload.pull_request.commits != 1) {
-        core.setFailed("Each pull request should contain only ONE commit!");
-    }
+    //if (!could_contain_multiple_commits(tag) && github.context.payload.pull_request.commits != 1) {
+    //    core.setFailed("Each pull request should contain only ONE commit!");
+    //}
 }
 
 // check the format of specific rev
