@@ -164,7 +164,7 @@ function check_patch(rev) {
         // only check for newly added lines
         if (line.startsWith('+') && line.endsWith(" ")) {
             console.log("\ntrailing spaces found!\n");
-            core.setFailed("Trailing spaces in line-" + ln + "\n" + line);
+            // core.setFailed("Trailing spaces in line-" + ln + "\n" + line);
         }
     });
 }
