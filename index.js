@@ -8,7 +8,7 @@ const process = require('process');
 const rev_separator = "#".repeat(27);
 
 function tag_of(title) {
-    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing'];
+    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing', 'CDS'];
     return known_tags.find(tag => title.startsWith("[" + tag + "]"));
 }
 
