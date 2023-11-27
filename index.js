@@ -54,10 +54,11 @@ function check_rev_comment(lines) {
     console.log(">> All mandatory fields are present");
 
     // If this is a backport commit, impose additional requirements
-    if (tag_of_backport(title) != undefined) {
+    if (tag_of_backport(title)) {
         console.log(">> Check backport commit with additional requirements");
         if (!/\[Backport\] (\d+): (.+)/.test(title)) {
             console.log(">> Backport commit title is not well formed");
+            return 1;
         }
     }
 
