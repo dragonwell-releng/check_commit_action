@@ -7,14 +7,19 @@ const process = require('process');
 // and using special string '########' to seperate revisions.
 const rev_separator = "#".repeat(27);
 
+var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing', 'CDS'];
+
 function tag_of(title) {
-    var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing', 'CDS'];
     return known_tags.find(tag => title.startsWith("[" + tag + "]"));
+}
+
+function tag_of_backport(title) {
+    return title.startsWith("[Backport]");
 }
 
 function check_rev_titile(title) {
     if (tag_of(title) == undefined) {
-        console.log("Unkown tag:" + title);
+        console.log("Unkown tag:" + title + ", Candidates: " + known_tags);
         return 1;
     }
     return 0;
@@ -22,10 +27,11 @@ function check_rev_titile(title) {
 
 // check comment of single revision, git metadata lines are not included
 function check_rev_comment(lines) {
+    console.log(">> Full commit message:")
     console.log(lines);
+    // Check if commit title is well formed
     var title = lines[0];
-    // check title
-    console.log(">> checking title line:" + title);
+    console.log(">> Checking title line:" + title);
     if (check_rev_titile(title) != 0) {
         console.log(">> Title check failed");
         core.setFailed("Title check failed:" + title);
@@ -34,21 +40,31 @@ function check_rev_comment(lines) {
         console.log(">> Title is OK!");
     }
 
-    // check for mandatory fields
-    console.log(">> checking mandatory fields!");
-    var mand_fields = ['Summary:', 'Test Plan:', 'Reviewed-by:', 'Issue:'];
-    mand_fields.forEach(mf => {
+    // Check if the mandatory fields are present and well formed
+    console.log(">> Checking mandatory fields!");
+    var mand_fields = ['Summary:', 'Testing:', 'Reviewers:', 'Issue:'];
+    for (let i = 0; i < mand_fields.length; i++) {
+        const mf = mand_fields[i];
         if (lines.find(l => l.startsWith(mf)) == undefined) {
-            console.log("Missing mandatory field:" + mf);
+            console.log("Missing mandatory field: " + mf);
             core.setFailed("Missing mandatory field '" + mf + "' in git log");
             return 1;
         }
-    });
-    if (lines.find(l => l.includes("alibaba-inc.com")) != undefined) {
-        console.log("No alibaba-inc string in commit message");
-        return 1;
     }
     console.log(">> All mandatory fields are present");
+
+    // If this is a backport commit, impose additional requirements
+    if (tag_of_backport(title) != undefined) {
+        console.log(">> Check backport commit with additional requirements");
+        if (!/\[Backport\] (\d+): (.+)/.test(title)) {
+            console.log(">> Backport commit title is not well formed");
+        }
+    }
+
+    if (lines.find(l => l.includes("alibaba-inc.com")) != undefined) {
+        console.log(">> No alibaba-inc string in commit message");
+        return 1;
+    }
     return 0;
 }
 
@@ -101,6 +117,8 @@ function check_last_n_revisions(ref_name, nof_revs) {
             }
         })
         if (cur_comm.length > 0 && 0 != check_rev_comment(cur_comm)) {
+            const DRAGONWELL_COMMIT_MESSAGE_TEMPLATE = "https://github.com/dragonwell-project/dragonwell11/blob/master/.github/commit_message_template";
+            console.log("Please refer to dragonwell standard commit message template at " + DRAGONWELL_COMMIT_MESSAGE_TEMPLATE)
             core.setFailed("Step check comment failed!")
         }
     });
