@@ -7,7 +7,7 @@ const process = require('process');
 // and using special string '########' to seperate revisions.
 const rev_separator = "#".repeat(27);
 
-var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing', 'CDS'];
+var known_tags = ['Misc', 'GC', 'MultiTenant', 'JWarmUp', 'RAS', 'JIT', 'JFR', 'Merge', 'Backport', 'Coroutine', 'Wisp', 'EagerAppCDS', 'QuickStart', 'Landing', 'CDS', 'Revert'];
 
 function tag_of(title) {
     return known_tags.find(tag => title.startsWith("[" + tag + "]"));
