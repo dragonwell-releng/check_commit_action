@@ -63,7 +63,7 @@ function check_rev_comment(lines) {
     }
 
     if (lines.find(l => l.includes("alibaba-inc.com")) != undefined) {
-        console.log(">> No alibaba-inc string in commit message");
+        console.log(">> 'alibaba-inc' string should not appear in commit message");
         return 1;
     }
     return 0;
