@@ -42,10 +42,10 @@ function check_rev_comment(lines) {
 
     // Check if the mandatory fields are present and well formed
     console.log(">> Checking mandatory fields!");
-    var mand_fields = ['Summary:', 'Testing:', 'Reviewers:', 'Issue:'];
+    var mand_fields = [/^[ ]*Summary[ ]*:[ ]*\S+/, /^[ ]*Testing[ ]*:[ ]*\S+/, /^[ ]*Reviewers[ ]*:[ ]*\S+/, /^[ ]*Issue[ ]*:[ ]*\S+/];
     for (let i = 0; i < mand_fields.length; i++) {
         const mf = mand_fields[i];
-        if (lines.find(l => l.startsWith(mf)) == undefined) {
+        if (!lines.some(line => mf.test(line))) {
             console.log("Missing mandatory field: " + mf);
             core.setFailed("Missing mandatory field '" + mf + "' in git log");
             return 1;
